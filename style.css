@@ -1,0 +1,145 @@
+/* General */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #d4fc79, #96e6a1);
+    margin: 0;
+    padding: 0;
+    transition: 0.3s;
+}
+
+header {
+    background-color: #4caf50;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+    text-shadow: 2px 2px #2e7d32;
+}
+
+nav button {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #fff;
+    color: #4caf50;
+    cursor: pointer;
+    border-radius: 50px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+nav button:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.1);
+}
+
+main {
+    padding: 20px;
+}
+
+section {
+    display: none;
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+section.active {
+    display: block;
+}
+
+ul, ol {
+    padding-left: 20px;
+}
+
+li {
+    margin-bottom: 15px;
+    padding: 12px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.complete-btn {
+    padding: 6px 12px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.complete-btn:hover {
+    background-color: #45a049;
+    transform: scale(1.1);
+}
+
+/* Dashboard styles */
+.stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.points-box, .badges-box {
+    background: rgba(255,255,255,0.8);
+    padding: 20px;
+    border-radius: 15px;
+    width: 45%;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.badges-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.badge {
+    background-color: #ffeb3b;
+    color: #4caf50;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Progress bar */
+.progress-bar-container {
+    margin-top: 20px;
+}
+
+.progress-bar {
+    background-color: #ddd;
+    border-radius: 20px;
+    width: 100%;
+    height: 25px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    background-color: #4caf50;
+    height: 100%;
+    width: 0;
+    border-radius: 20px;
+    transition: width 0.6s ease-in-out;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
