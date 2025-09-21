@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌱 Farmatech</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <header>
+    <h1>🌱 Farmatech</h1>
+    <nav>
+      <button onclick="showSection('dashboard')">Dashboard</button>
+      <button onclick="showSection('challenges')">Challenges</button>
+      <button onclick="showSection('leaderboard')">Leaderboard</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Dashboard -->
+    <section id="dashboard" class="active">
+      <h2>Dashboard</h2>
+      <div class="stats">
+        <div class="points-box">
+          <h3>Points</h3>
+          <p id="points">0</p>
+        </div>
+        <div class="badges-box">
+          <h3>Badges</h3>
+          <div id="badges" class="badges-container"><p>No badges yet 🌱</p></div>
+        </div>
+      </div>
+      <div class="progress-bar-container">
+        <h3>Progress</h3>
+        <div class="progress-bar">
+          <div id="progress" class="progress-fill"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Challenges -->
+    <section id="challenges">
+      <h2>Challenges</h2>
+      <ul id="challenge-list"></ul>
+    </section>
+
+    <!-- Leaderboard -->
+    <section id="leaderboard">
+      <h2>Leaderboard</h2>
+      <ol id="leaderboard-list"></ol>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
