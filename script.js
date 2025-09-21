@@ -1,67 +1,65 @@
-body {
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(to top, #d4fc79, #96e6a1);
+// Navigation
+function showSection(id){
+    document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
 
-header {
-  background-color: #4caf50;
-  color: white;
-  padding: 15px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+// Gamification
+let points = 0;
+let badges = [];
+
+// Pre-filled leaderboard demo
+let leaderboard = [
+  {name:"Alice", points:80}, {name:"Bob", points:65}, {name:"You", points:0}
+];
+
+// Pre-filled challenges
+const challenges = [
+  {task:"Use organic fertilizer", points:10, badge:"Organic Beginner"},
+  {task:"Reduce pesticide usage", points:20, badge:"Eco Warrior"},
+  {task:"Implement drip irrigation", points:30, badge:"Water Saver"},
+  {task:"Plant 5 trees", points:40, badge:"Tree Planter"}
+];
+
+function loadChallenges(){
+  const ul = document.getElementById('challenge-list');
+  ul.innerHTML="";
+  challenges.forEach((c,i)=>{
+    const li = document.createElement('li');
+    li.innerHTML=`<span>${c.task}</span>
+                  <button class="complete-btn" onclick="completeChallenge(${i},this)">Complete</button>`;
+    ul.appendChild(li);
+  });
 }
 
-header h1 { font-size: 2rem; text-shadow: 2px 2px #2e7d32; }
-
-nav button {
-  margin: 5px; padding: 10px 20px; border-radius: 50px;
-  border: none; background-color: #fff; color: #4caf50;
-  font-weight: bold; cursor: pointer; transition: 0.3s;
-}
-nav button:hover { transform: scale(1.1); background-color: #e0e0e0; }
-
-main { padding: 20px; }
-section { display: none; animation: fadeIn 0.6s ease-in-out; }
-section.active { display: block; }
-ul, ol { padding-left: 20px; }
-li { margin-bottom: 15px; padding: 12px; background: rgba(255,255,255,0.9); border-radius: 12px;
-    display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+function completeChallenge(i,btn){
+  const c = challenges[i];
+  points+=c.points;
+  if(!badges.includes(c.badge)) badges.push(c.badge);
+  document.getElementById('points').textContent=points;
+  updateProgress(); updateLevel(); loadBadges();
+  btn.disabled=true; btn.textContent="Completed"; btn.style.backgroundColor="#9e9e9e";
+  confetti({particleCount:150,spread:100,colors:['#4caf50','#8bc34a','#ffeb3b']});
+  updateLeaderboard();
 }
 
-.complete-btn, form button {
-  padding: 6px 12px; background-color: #4caf50; color: white; border: none; border-radius: 25px;
-  font-weight: bold; cursor: pointer; transition: 0.3s;
+function loadBadges(){
+  const container = document.getElementById('badges');
+  container.innerHTML='';
+  if(badges.length===0){container.innerHTML='<p>No badges yet 🌱</p>'; return;}
+  badges.forEach(b=>{
+    const span=document.createElement('span'); span.classList.add('badge');
+    span.innerHTML=`<i class="fa-solid fa-leaf"></i> ${b}`; container.appendChild(span);
+  });
 }
-.complete-btn:hover, form button:hover { transform: scale(1.1); background-color: #45a049; }
 
-.stats { display: flex; justify-content: space-around; flex-wrap: wrap; margin-bottom: 20px; }
-.points-box, .level-box, .badges-box { background: rgba(255,255,255,0.9); padding: 20px; border-radius: 15px;
-    width: 28%; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin: 10px 0; }
+function updateProgress(){ document.getElementById('progress').style.width=Math.min(points,100)+'%'; }
+function updateLevel(){ document.getElementById('level').textContent=Math.floor(points/50)+1; }
 
-.badges-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-.badge { background-color: #ffeb3b; color: #4caf50; padding: 5px 10px; border-radius: 20px;
-    font-weight: bold; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
-
-#level { font-size: 1.5rem; font-weight: bold; color: #ffffff; text-shadow: 2px 2px #2e7d32; transition: transform 0.3s; }
-#level.level-up { transform: scale(1.5); color: #ffeb3b; }
-
-.progress-bar-container { margin-top: 20px; }
-.progress-bar { background-color: #ddd; border-radius: 20px; width: 100%; height: 25px; overflow: hidden; }
-.progress-fill { background-color: #4caf50; height: 100%; width: 0; border-radius: 20px; transition: width 0.6s ease-in-out; }
-
-.weather-advisory { margin-top: 20px; background: rgba(255,255,255,0.8); padding: 15px; border-radius: 12px; text-align: center; }
-
-.farm-bg { position: fixed; top:0; left:0; width:100%; height:100%; background:url('farm-background.gif') no-repeat center center; background-size: cover; z-index: -1; opacity:0.15; }
-
-@keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
-
-@media (max-width: 768px) {
-  .stats { flex-direction: column; }
-  .points-box, .level-box, .badges-box { width: 80%; margin: 10px auto; }
-  nav button { width: 80%; margin: 10px auto; }
-      }
+function updateLeaderboard(){
+  const ol=document.getElementById('leaderboard-list');
+  ol.innerHTML="";
+  leaderboard.find(u=>u.name==="You").points=points;
+  leaderboard.sort((a,b)=>b.points-a.points);
+  leaderboard.forEach(u=>{
+    const li=document.createElement('li');
