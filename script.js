@@ -1,122 +1,90 @@
-// Firebase config (replace with your Firebase project config)
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_ID",
-    appId: "YOUR_APP_ID"
-};
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-let currentUser = null;
-
-// Authentication
-function register() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    auth.createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-            currentUser = userCredential.user;
-            db.collection("users").doc(currentUser.uid).set({
-                points: 0,
-                badges: 0,
-                challenges: {}
-            });
-            alert("Registered successfully!");
-        })
-        .catch(err => alert(err.message));
+// Navigation
+function showSection(id){
+    document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
 
-function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    auth.signInWithEmailAndPassword(email, password)
-        .then(userCredential => {
-            currentUser = userCredential.user;
-            loadDashboard();
-            loadLeaderboard();
-            alert("Logged in successfully!");
-        })
-        .catch(err => alert(err.message));
+// Gamification
+let points = 0;
+let badges = [];
+let crops = [];
+
+// Pre-filled leaderboard demo
+let leaderboard = [
+  {name:"Alice", points:80}, {name:"Bob", points:65}, {name:"You", points:0}
+];
+
+// Pre-filled challenges
+const challenges = [
+  {task:"Use organic fertilizer", points:10, badge:"Organic Beginner"},
+  {task:"Reduce pesticide usage", points:20, badge:"Eco Warrior"},
+  {task:"Implement drip irrigation", points:30, badge:"Water Saver"},
+  {task:"Plant 5 trees", points:40, badge:"Tree Planter"}
+];
+
+// Load Challenges
+function loadChallenges(){
+  const ul = document.getElementById('challenge-list');
+  ul.innerHTML="";
+  challenges.forEach((c,i)=>{
+    const li = document.createElement('li');
+    li.innerHTML=`<span>${c.task}</span>
+                  <button class="complete-btn" onclick="completeChallenge(${i},this)">Complete</button>`;
+    ul.appendChild(li);
+  });
 }
 
-// Dashboard & Badges
-function loadDashboard() {
-    db.collection("users").doc(currentUser.uid).get()
-        .then(doc => {
-            const data = doc.data();
-            document.getElementById("points").innerText = data.points;
-            document.getElementById("badges").innerText = data.badges;
-
-            const container = document.getElementById("badge-container");
-            container.innerHTML = "";
-            for(let i=0; i<data.badges; i++) {
-                const badge = document.createElement("div");
-                badge.classList.add("badge");
-                badge.innerText = "🏅";
-                container.appendChild(badge);
-            }
-        });
+// Complete Challenge
+function completeChallenge(i,btn){
+  const c = challenges[i];
+  points+=c.points;
+  if(!badges.includes(c.badge)) badges.push(c.badge);
+  document.getElementById('points').textContent=points;
+  updateProgress(); updateLevel(); loadBadges();
+  btn.disabled=true; btn.textContent="Completed"; btn.style.backgroundColor="#9e9e9e";
+  confetti({particleCount:150,spread:100,colors:['#4caf50','#8bc34a','#ffeb3b']});
+  updateLeaderboard();
 }
 
-function completeChallenge(challenge, value) {
-    db.collection("users").doc(currentUser.uid).get().then(doc => {
-        let data = doc.data();
-        if(!data.challenges[challenge]) {
-            data.points += value;
-            data.badges = Math.floor(data.points / 50);
-            data.challenges[challenge] = true;
-            db.collection("users").doc(currentUser.uid).set(data)
-                .then(() => {
-                    loadDashboard();
-                    loadLeaderboard();
-                    alert(`🎉 Challenge completed! You earned ${value} points.`);
-                });
-        } else {
-            alert("✅ Challenge already completed!");
-        }
-    });
+// Load Badges
+function loadBadges(){
+  const container = document.getElementById('badges');
+  container.innerHTML='';
+  if(badges.length===0){container.innerHTML='<p>No badges yet 🌱</p>'; return;}
+  badges.forEach(b=>{
+    const span=document.createElement('span'); span.classList.add('badge');
+    span.innerHTML=`<i class="fa-solid fa-leaf"></i> ${b}`; container.appendChild(span);
+  });
 }
 
-// Farm Simulation
-function startSimulation() {
-    const harvest = Math.floor(Math.random() * 50) + 10;
-    db.collection("users").doc(currentUser.uid).get().then(doc => {
-        let data = doc.data();
-        data.points += harvest;
-        data.badges = Math.floor(data.points / 50);
-        db.collection("users").doc(currentUser.uid).set(data)
-            .then(() => {
-                loadDashboard();
-                loadLeaderboard();
-                alert(`🌾 Simulation complete! You earned ${harvest} points.`);
-            });
-    });
-}
+// Progress & Level
+function updateProgress(){ document.getElementById('progress').style.width=Math.min(points,100)+'%'; }
+function updateLevel(){ document.getElementById('level').textContent=Math.floor(points/50)+1; }
 
 // Leaderboard
-function loadLeaderboard() {
-    db.collection("users").orderBy("points", "desc").limit(10).get().then(snapshot => {
-        const list = document.getElementById("leaderboard-list");
-        list.innerHTML = "";
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            const li = document.createElement("li");
-            li.innerText = `${doc.id} - ${data.points} pts`;
-            list.appendChild(li);
-        });
-    });
+function updateLeaderboard(){
+  const ol=document.getElementById('leaderboard-list');
+  ol.innerHTML="";
+  leaderboard.find(u=>u.name==="You").points=points;
+  leaderboard.sort((a,b)=>b.points-a.points);
+  leaderboard.forEach(u=>{
+    const li=document.createElement('li');
+    li.textContent=`${u.name} - ${u.points} pts`;
+    ol.appendChild(li);
+  });
 }
 
-// Auth listener
-auth.onAuthStateChanged(user => {
-    if(user) {
-        currentUser = user;
-        loadDashboard();
-        loadLeaderboard();
-    }
+// Crop Tracker
+document.getElementById('crop-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  const name = document.getElementById('crop-name').value;
+  const date = document.getElementById('plant-date').value;
+  crops.push({name:name, date:date, task:"None"});
+  document.getElementById('crop-name').value='';
+  document.getElementById('plant-date').value='';
+  renderCrops();
 });
+
+function renderCrops(){
+  const ul = document.getElementById('crop-list');
+  ul.innerHTML
