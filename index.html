@@ -1,67 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoFarmInnovators - Gamified Sustainable Farming</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌱 Farmatech - Sustainable Farming</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 </head>
 <body>
-    <header>
-        <h1>🌱 EcoFarmInnovators</h1>
-        <nav>
-            <ul>
-                <li><a href="#dashboard">Dashboard</a></li>
-                <li><a href="#challenges">Challenges</a></li>
-                <li><a href="#leaderboard">Leaderboard</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <section id="auth">
-        <h2>Login / Register</h2>
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="password" placeholder="Password">
-        <button class="btn" onclick="register()">Register</button>
-        <button class="btn" onclick="login()">Login</button>
-    </section>
+<header>
+  <h1>🌱 Farmatech</h1>
+  <nav>
+    <button onclick="showSection('dashboard')">Dashboard</button>
+    <button onclick="showSection('challenges')">Challenges</button>
+    <button onclick="showSection('crop-tracker')">Crop Tracker</button>
+    <button onclick="showSection('leaderboard')">Leaderboard</button>
+  </nav>
+</header>
 
-    <section id="hero">
-        <h2>Grow Sustainably, Earn Rewards!</h2>
-        <p>Complete challenges, earn badges, and compete with other farmers.</p>
-        <button class="btn" onclick="startSimulation()">Start Farm Simulation 🌾</button>
-    </section>
+<main>
+  <!-- Dashboard -->
+  <section id="dashboard" class="active">
+    <h2>Dashboard</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Points</h3>
+        <p id="points">0</p>
+      </div>
+      <div class="card">
+        <h3>Level</h3>
+        <p id="level">1</p>
+      </div>
+      <div class="card">
+        <h3>Badges</h3>
+        <div id="badges" class="badges-container"><p>No badges yet 🌱</p></div>
+      </div>
+    </div>
+    <div class="progress-container">
+      <h3>Progress</h3>
+      <div class="progress-bar">
+        <div id="progress" class="progress-fill"></div>
+      </div>
+    </div>
+    <div class="weather-card">
+      <h3>Weather Advisory</h3>
+      <p id="weather">☀ Sunny, Temp: 28°C, Ideal for planting wheat 🌾</p>
+    </div>
+  </section>
 
-    <section id="dashboard">
-        <h2>Your Dashboard</h2>
-        <div class="stats">
-            <p>Points: <span id="points">0</span></p>
-            <p>Badges: <span id="badges">0</span></p>
-        </div>
-        <div id="badge-container"></div>
-    </section>
+  <!-- Challenges -->
+  <section id="challenges">
+    <h2>Challenges</h2>
+    <ul id="challenge-list"></ul>
+  </section>
 
-    <section id="challenges">
-        <h2>Weekly Challenges</h2>
-        <ul id="challenge-list">
-            <li>💧 Reduce water usage by 10% <button class="btn-challenge" onclick="completeChallenge('water', 10)">Complete</button></li>
-            <li>🐞 Use organic pest control <button class="btn-challenge" onclick="completeChallenge('pest', 15)">Complete</button></li>
-            <li>🌾 Try crop rotation this week <button class="btn-challenge" onclick="completeChallenge('rotation', 20)">Complete</button></li>
-        </ul>
-    </section>
+  <!-- Crop Tracker -->
+  <section id="crop-tracker">
+    <h2>Crop Tracker</h2>
+    <form id="crop-form">
+      <input type="text" id="crop-name" placeholder="Crop Name" required>
+      <input type="date" id="plant-date" required>
+      <button type="submit">Add Crop</button>
+    </form>
+    <ul id="crop-list"></ul>
+  </section>
 
-    <section id="leaderboard">
-        <h2>Leaderboard</h2>
-        <ol id="leaderboard-list"></ol>
-    </section>
+  <!-- Leaderboard -->
+  <section id="leaderboard">
+    <h2>Leaderboard</h2>
+    <ol id="leaderboard-list"></ol>
+  </section>
+</main>
 
-    <footer>
-        <p>© 2025 EcoFarmInnovators | Sustainable Farming for Everyone</p>
-    </footer>
+<div class="farm-bg"></div>
 
-    <script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
